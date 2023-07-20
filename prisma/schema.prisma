@@ -1,0 +1,91 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["clientExtensions"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  email String @unique
+  hash  String
+
+  surName    String?
+  firstName  String?
+  middleName String?
+
+  countryCode String?
+  phoneNumber Int?    @unique
+  address     String?
+
+  role Role @default(USER) //How would other types of user be created? via invite?
+
+  institutionName String?
+  positionTitle   String?
+  staffNumber     Int?
+  nameOfFaculty   String?
+
+  author1 ReseachPaper[] @relation("Authored Research Paper")
+  cAuthor ReseachPaper[] @relation("CoAuthored Research Paper")
+  author2 ReseachPaper[] @relation("Author 2 Research Paper")
+  author3 ReseachPaper[] @relation("Author 3 Research Paper")
+  editor1 Journal[]      @relation("Journal Editor 1")
+  editor2 Journal[]      @relation("Journal Editor 2")
+
+  @@unique([institutionName, staffNumber])
+}
+
+model ReseachPaper {
+  Id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+
+  title           String
+  areaOfReasearch String?
+
+  author1Id String
+  author1   User   @relation("Authored Research Paper", fields: [author1Id], references: [id]) //pass ; Does USER being here mean only USER can publish?
+
+  cAuthorId String
+  cAuthor   User   @relation("CoAuthored Research Paper", fields: [cAuthorId], references: [id])
+
+  author2Id String?
+  author2   User?   @relation("Author 2 Research Paper", fields: [author2Id], references: [id]) //pass @default(USER)
+
+  authoer3Id String?
+  author3    User?   @relation("Author 3 Research Paper", fields: [authoer3Id], references: [id])
+
+  abstract String?
+
+  journals Journal[]
+  //How do they post?
+}
+
+model Journal {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+
+  title String?
+  field String?
+
+  editor1Id String
+  editor1   User   @relation("Journal Editor 1", fields: [editor1Id], references: [id]) //Dont forget to apply same as ResearchPaper
+
+  editor2Id String?
+  editor2   User?   @relation("Journal Editor 2", fields: [editor2Id], references: [id])
+
+  researchPapers ReseachPaper[]
+}
+
+enum Role {
+  USER
+  ADMIN
+}

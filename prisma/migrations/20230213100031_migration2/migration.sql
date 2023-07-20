@@ -1,0 +1,11 @@
+-- AlterTable
+ALTER TABLE "ReseachPaper" ALTER COLUMN "areaOfReasearch" DROP NOT NULL,
+ALTER COLUMN "abstract" DROP NOT NULL;
+
+-- AlterTable
+ALTER TABLE "User" ALTER COLUMN "surName" DROP NOT NULL,
+ALTER COLUMN "firstName" DROP NOT NULL,
+ALTER COLUMN "middleName" DROP NOT NULL,
+ALTER COLUMN "countryCode" DROP NOT NULL,
+ALTER COLUMN "phoneNumber" DROP NOT NULL,
+ALTER COLUMN "institutionName" DROP NOT NULL;
